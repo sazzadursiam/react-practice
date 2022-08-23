@@ -8,29 +8,39 @@ import AddItem from './components/Content/AddItem';
 import SearchItem from './components/Content/SearchItem';
 
 function App() {
-  // const [items, setItems] = useState([
-  //   {
-  //     id: 1,
-  //     item: 'Item 1',
-  //     checked: true
-  //   },
-  //   {
-  //     id: 2,
-  //     item: 'Item 2',
-  //     checked: false
-  //   },
-  //   {
-  //     id: 3,
-  //     item: 'Item 3',
-  //     checked: false
-  //   },
-  // ]);
-  const [items, setItems] = useState(JSON.parse(localStorage.getItem('SHOPPING_LIST')) || []);
+  const API_URL = "http://localhost:3500/items"
+
+  const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [search, setSearch] = useState('');
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+
+
   useEffect(() => {
-    localStorage.setItem('SHOPPING_LIST', JSON.stringify(items))
-  }, [items]);
+
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw Error("Can not find Data.");
+        const listItems = await response.json();
+        setItems(listItems);
+        setFetchError(null);
+      } catch (error) {
+        // console.log('error', error.message);
+        setFetchError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    setTimeout(() => {
+      (async () => await fetchItems())();
+    }, 2000)
+
+  }, []);
+
   // const saveAndSetItem = (newItems) => {
   //   setItems(newItems);
   //   localStorage.setItem('SHOPPING_LIST', JSON.stringify(newItems))
@@ -74,11 +84,17 @@ function App() {
         search={search}
         setSearch={setSearch}
       />
-      <Content
-        items={items.filter(item => ((item.item).toLowerCase()).includes(search.toLocaleLowerCase()))}
-        handelClick={handelClick}
-        handelDelete={handelDelete}
-      />
+      <main>
+        {isLoading && <p>Loading........</p>}
+        {fetchError && <p style={{ color: "red", padding: "10px" }}>{`Error: ${fetchError}`}</p>}
+        {!fetchError && !isLoading &&
+          <Content
+            items={items.filter(item => ((item.item).toLowerCase()).includes(search.toLocaleLowerCase()))}
+            handelClick={handelClick}
+            handelDelete={handelDelete}
+          />
+        }
+      </main>
       <Footer />
     </div>
   );

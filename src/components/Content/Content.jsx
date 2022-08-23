@@ -7,8 +7,8 @@ const Content = ({ items, handelDelete, handelClick }) => {
 
 
     return (
-        <main className='main__content'>
-        
+        <>
+
             {items.length ? (
                 <ItemList
                     items={items}
@@ -18,7 +18,7 @@ const Content = ({ items, handelDelete, handelClick }) => {
             ) : (
                 <h3 style={{ margin: "5px", color: "red" }}>List is empty</h3>
             )}
-        </main>
+        </>
     )
 }
 
