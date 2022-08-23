@@ -1,0 +1,8 @@
+.main__content{
+    min-height: 80vh;
+    padding: 20px 7%;
+    background-color: azure;
+}
+.item{
+    list-style-type: none;
+}
