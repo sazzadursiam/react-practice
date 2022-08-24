@@ -6,6 +6,7 @@ import Content from './components/Content/Content';
 import Footer from './components/Footer/Footer';
 import AddItem from './components/Content/AddItem';
 import SearchItem from './components/Content/SearchItem';
+import apiRequest from './components/apiRequest';
 
 function App() {
   const API_URL = "http://localhost:3500/items"
@@ -52,6 +53,18 @@ function App() {
     const myNewItem = { id, checked: false, item };
     const listItems = [...items, myNewItem];
     setItems(listItems);
+
+    const postOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': "application/json",
+      },
+      body: JSON.stringify(myNewItem)
+    }
+    const result = (async () => await apiRequest(API_URL, postOptions))();
+
+    if (result) setFetchError(result.message);
+    console.log(result);
   }
 
 
